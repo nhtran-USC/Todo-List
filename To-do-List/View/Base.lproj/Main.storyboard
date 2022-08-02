@@ -24,11 +24,11 @@
                                 <rect key="frame" x="0.0" y="139" width="414" height="723"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="uV2-rn-rSd">
-                                        <rect key="frame" x="0.0" y="44.5" width="414" height="43.5"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="itemCell" rowHeight="63" id="uV2-rn-rSd">
+                                        <rect key="frame" x="0.0" y="44.5" width="414" height="63"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="uV2-rn-rSd" id="o7l-KQ-Z7Y">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="63"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -52,12 +52,19 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="8tX-VK-sF3">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="56a-XI-b0X"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="56a-XI-b0X">
+                            <connections>
+                                <action selector="addBarButtonDidTap:" destination="BYZ-38-t0r" id="9L2-Kr-8AF"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="a73-j3-NiB" id="hjR-dJ-BVU"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1007" y="115"/>
+            <point key="canvasLocation" x="1005.7971014492755" y="114.50892857142857"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Rea-XZ-Ta3">

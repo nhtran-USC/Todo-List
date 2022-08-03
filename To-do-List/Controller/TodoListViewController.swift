@@ -81,11 +81,11 @@ extension TodoListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "itemCell", for: indexPath)
         cell.textLabel!.text = items![indexPath.row].text
+        items![indexPath.row].isDone ? (cell.accessoryType = .checkmark) : (cell.accessoryType = .none)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         guard let cell = tableView.cellForRow(at: indexPath)
         else {
             return
@@ -93,7 +93,8 @@ extension TodoListViewController: UITableViewDataSource, UITableViewDelegate {
         
         items![indexPath.row].isDone ? (cell.accessoryType = .none) : (cell.accessoryType = .checkmark)
         items![indexPath.row].isDone = !items![indexPath.row].isDone
-        
+        saveItem()
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -103,7 +104,10 @@ extension TodoListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if (editingStyle == .delete) {
             // handle delete (by removing the data from your array and updating the tableview)
-            items!.remove(at: indexPath.row)
+//            items!.remove(at: indexPath.row)
+            context.delete(items![indexPath.row])
+            saveItem()
+            fetchItem()
             tableView.reloadData()
         }
     }

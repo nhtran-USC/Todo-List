@@ -6,22 +6,21 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        sampleItemTest.append(item1)
-        sampleItemTest.append(item2)
-        sampleItemTest.append(item3)
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        context = appDelegate.persistentContainer.viewContext
+        
+        fetchItem()
+        tableView.reloadData()
     }
     
-//    var sampleTestItem = ["shopping", "being cool", "gym"]
-    
-    var item1 = Item(text: "shopping", isDone: false)
-    var item2 = Item(text: "cool", isDone: false)
-    var item3 = Item(text: "gym", isDone: false)
-    var sampleItemTest = [Item]()
+    var context: NSManagedObjectContext!
+    var items:[Item]?
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -39,11 +38,13 @@ class TodoListViewController: UIViewController {
             else {
                 return
             }
-            let newItem = Item(text: itemText, isDone: false)
-            self.sampleItemTest.append(newItem)
+            let newItem = Item(context: self.context)
+            newItem.text = itemText
+            newItem.isDone = false
+            
+            self.saveItem()
+            self.fetchItem()
             self.tableView.reloadData()
-            
-            
          })
         addingItemAlert.addTextField { textField in
             textField.placeholder = "Enter new item"
@@ -52,17 +53,34 @@ class TodoListViewController: UIViewController {
         addingItemAlert.addAction(addButton)
         self.present(addingItemAlert, animated: true, completion: nil)
     }
+    
+    func saveItem() {
+        do {
+            try context.save()
+        }
+        catch {
+            fatalError("Failed to save")
+        }
+    }
+    
+    func fetchItem() {
+        items = try! context.fetch(Item.fetchRequest())
+    }
 }
 
 
 extension TodoListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sampleItemTest.count
+        guard let items = items
+        else{
+            return 0
+        }
+        return items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "itemCell", for: indexPath)
-        cell.textLabel!.text = sampleItemTest[indexPath.row].text
+        cell.textLabel!.text = items![indexPath.row].text
         return cell
     }
     
@@ -73,8 +91,8 @@ extension TodoListViewController: UITableViewDataSource, UITableViewDelegate {
             return
         }
         
-        sampleItemTest[indexPath.row].isDone ? (cell.accessoryType = .none) : (cell.accessoryType = .checkmark)
-        sampleItemTest[indexPath.row].isDone = !sampleItemTest[indexPath.row].isDone
+        items![indexPath.row].isDone ? (cell.accessoryType = .none) : (cell.accessoryType = .checkmark)
+        items![indexPath.row].isDone = !items![indexPath.row].isDone
         
     }
     
@@ -85,7 +103,7 @@ extension TodoListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if (editingStyle == .delete) {
             // handle delete (by removing the data from your array and updating the tableview)
-            sampleItemTest.remove(at: indexPath.row)
+            items!.remove(at: indexPath.row)
             tableView.reloadData()
         }
     }

@@ -16,11 +16,13 @@ class TodoListViewController: UIViewController {
         context = appDelegate.persistentContainer.viewContext
         
         fetchItem()
-        tableView.reloadData()
+
     }
     
     var context: NSManagedObjectContext!
     var items:[Item]?
+    var filteredItem:[Item]?
+    @IBOutlet weak var itemSearchBar: UISearchBar!
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -44,11 +46,10 @@ class TodoListViewController: UIViewController {
             
             self.saveItem()
             self.fetchItem()
-            self.tableView.reloadData()
+
          })
         addingItemAlert.addTextField { textField in
             textField.placeholder = "Enter new item"
-            
         }
         addingItemAlert.addAction(addButton)
         self.present(addingItemAlert, animated: true, completion: nil)
@@ -63,8 +64,9 @@ class TodoListViewController: UIViewController {
         }
     }
     
-    func fetchItem() {
-        items = try! context.fetch(Item.fetchRequest())
+    func fetchItem(with request:NSFetchRequest<Item> = Item.fetchRequest()) {
+        items = try! context.fetch(request)
+        tableView.reloadData()
     }
 }
 
@@ -108,8 +110,29 @@ extension TodoListViewController: UITableViewDataSource, UITableViewDelegate {
             context.delete(items![indexPath.row])
             saveItem()
             fetchItem()
-            tableView.reloadData()
         }
     }
 }
 
+extension TodoListViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let itemSearchTerm = itemSearchBar.text
+        else {
+            return
+        }
+        if itemSearchTerm.isEmpty {
+            fetchItem()
+            itemSearchBar.endEditing(true)
+            return
+        }
+        
+        let request = NSFetchRequest<Item>(entityName: "Item")
+        
+        request.predicate = NSPredicate(format: "text CONTAINS[cd] %@", itemSearchTerm)
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "text", ascending: true)]
+        
+        fetchItem(with: request)
+        itemSearchBar.endEditing(true)
+    }
+}

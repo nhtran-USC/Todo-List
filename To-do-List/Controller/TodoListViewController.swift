@@ -12,19 +12,25 @@ class TodoListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        context = appDelegate.persistentContainer.viewContext
+        guard let selectedCategory = selectedCategory
+        else {
+            return
+        }
         
-        fetchItem()
-
+        categoryRequest.predicate = NSPredicate(format: "category.title MATCHES %@", selectedCategory.title!)
+        fetchItem(with: categoryRequest)
     }
     
-    var context: NSManagedObjectContext!
-    var items:[Item]?
-    var filteredItem:[Item]?
-    @IBOutlet weak var itemSearchBar: UISearchBar!
+    let categoryRequest = NSFetchRequest<Item>(entityName: "Item")
     
     @IBOutlet weak var tableView: UITableView!
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    @IBOutlet weak var itemSearchBar: UISearchBar!
+//    @IBOutlet weak var tableView: UITableView!
+    
+    var items:[Item]?
+    var filteredItem:[Item]?
+    var selectedCategory:CategoryTask!
     
     @IBAction func addBarButtonDidTap(_ sender: UIBarButtonItem) {
         let addingItemAlert = UIAlertController(title: "Adding New Item", message: nil, preferredStyle: .alert)
@@ -43,9 +49,10 @@ class TodoListViewController: UIViewController {
             let newItem = Item(context: self.context)
             newItem.text = itemText
             newItem.isDone = false
+            newItem.category = self.selectedCategory
             
             self.saveItem()
-            self.fetchItem()
+            self.fetchItem(with: self.categoryRequest)
 
          })
         addingItemAlert.addTextField { textField in
@@ -109,7 +116,7 @@ extension TodoListViewController: UITableViewDataSource, UITableViewDelegate {
 //            items!.remove(at: indexPath.row)
             context.delete(items![indexPath.row])
             saveItem()
-            fetchItem()
+            fetchItem(with: categoryRequest)
         }
     }
 }
@@ -121,18 +128,48 @@ extension TodoListViewController: UISearchBarDelegate {
             return
         }
         if itemSearchTerm.isEmpty {
-            fetchItem()
+            fetchItem(with: categoryRequest)
             itemSearchBar.endEditing(true)
             return
         }
         
         let request = NSFetchRequest<Item>(entityName: "Item")
         
-        request.predicate = NSPredicate(format: "text CONTAINS[cd] %@", itemSearchTerm)
+        let categoryPredicate = NSPredicate(format: "category.title MATCHES %@", selectedCategory.title!)
+        let searchPredicate = NSPredicate(format: "text CONTAINS[cd] %@", itemSearchTerm)
+        
+        let combinePredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [searchPredicate, categoryPredicate])
+        
+        request.predicate = combinePredicate
         
         request.sortDescriptors = [NSSortDescriptor(key: "text", ascending: true)]
         
         fetchItem(with: request)
-        itemSearchBar.endEditing(true)
+        itemSearchBar.resignFirstResponder()
     }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard let itemSearchTerm = itemSearchBar.text
+        else {
+            return
+        }
+        if itemSearchTerm.isEmpty {
+            fetchItem(with: categoryRequest)
+            return
+        }
+        
+        let request = NSFetchRequest<Item>(entityName: "Item")
+        
+        let categoryPredicate = NSPredicate(format: "category.title MATCHES %@", selectedCategory.title!)
+        let searchPredicate = NSPredicate(format: "text CONTAINS[cd] %@", itemSearchTerm)
+        
+        let combinePredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [searchPredicate, categoryPredicate])
+        
+        request.predicate = combinePredicate
+        request.sortDescriptors = [NSSortDescriptor(key: "text", ascending: true)]
+        
+        fetchItem(with: request)
+//        itemSearchBar.endEditing(true)
+    }
+    
 }

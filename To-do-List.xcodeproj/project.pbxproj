@@ -17,6 +17,7 @@
 		265015342896104E009B83A5 /* To_do_ListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265015332896104E009B83A5 /* To_do_ListUITests.swift */; };
 		265015362896104E009B83A5 /* To_do_ListUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265015352896104E009B83A5 /* To_do_ListUITestsLaunchTests.swift */; };
 		26501547289610F4009B83A5 /* TodoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26501546289610F4009B83A5 /* TodoListViewController.swift */; };
+		2650155128A03347009B83A5 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2650155028A03347009B83A5 /* CategoryViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		265015332896104E009B83A5 /* To_do_ListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = To_do_ListUITests.swift; sourceTree = "<group>"; };
 		265015352896104E009B83A5 /* To_do_ListUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = To_do_ListUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		26501546289610F4009B83A5 /* TodoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListViewController.swift; sourceTree = "<group>"; };
+		2650155028A03347009B83A5 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				26501546289610F4009B83A5 /* TodoListViewController.swift */,
+				2650155028A03347009B83A5 /* CategoryViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -293,6 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2650155128A03347009B83A5 /* CategoryViewController.swift in Sources */,
 				265015102896104E009B83A5 /* AppDelegate.swift in Sources */,
 				265015122896104E009B83A5 /* SceneDelegate.swift in Sources */,
 				2650151A2896104E009B83A5 /* To_do_List.xcdatamodeld in Sources */,
